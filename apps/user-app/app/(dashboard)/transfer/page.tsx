@@ -1,5 +1,63 @@
-export default function transfer(){
- return <div>
-    transfer
+
+import { getServerSession } from "next-auth"
+import AddMoneyCard from "../../../components/AddMoneyCard"
+import BalanceCard from "../../../components/BalanceCard"
+import OnRampTransactionsCard from "../../../components/OnRampTransaction"
+import type { Transaction } from "../../../components/OnRampTransaction"
+import prisma from "@repo/db/client"
+import { authOptions } from "../../lib/auth"
+
+async function getBalance()
+{
+    const session=await getServerSession(authOptions)
+    const balance= await prisma.balance.findFirst(
+        {
+        where:{
+            userId:Number(session?.user?.id)
+        }
+    })
+    return {amount:balance?.amount,
+            locked:balance?.locked }
+}
+async function getTransactions()
+{
+    const session=await getServerSession(authOptions);
+    const transactions=await prisma.onRampTransaction.findMany({
+        where:{
+           userId:Number(session?.user?.id)
+        }
+    })
+     return transactions.map(t=>({
+          
+            status:t.status,
+            amount:t.amount,
+            time:t.startTime,
+            provider:t.provider
+          
+    }))
+
+}
+
+export default async function transfer(){
+    const balance=await getBalance()
+    const transactions= await getTransactions()
+ return <div className="min-w-screen ">
+        <h1 className="text-3xl m-4 text-[#6a51a6] font-bold block">Transfer</h1>   
+        
+       <div className="grid grid-cols-1 md:grid-cols-2 min-w-full">
+        <div>
+            <AddMoneyCard/>
+        </div>
+        <div >
+            <div>
+             <BalanceCard balance={balance.amount??0} locked={balance.locked??0}></BalanceCard>
+            </div>
+            <div>
+             <OnRampTransactionsCard transactions={transactions}/>
+            </div>
+        </div>
+        
+       </div>
+   
 </div>
 }
