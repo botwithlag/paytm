@@ -43,6 +43,14 @@ model Balance {
   user   User @relation(fields: [userId], references: [id])
 }
 
+model Banktoken{
+  id  Int @id @default(autoincrement())
+  token String @unique
+  userid Int //add provider and amount
+  amount Int ?
+  completion Boolean? @default(false)
+}
+
 enum AuthType {
   Google
   Github

@@ -1,6 +1,7 @@
 "use client"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import onRampTransaction from "../app/lib/actions/onRampTransactions";
 import Card from '@repo/ui/card'
 import Select from '@repo/ui/select'
 import TextInput from '@repo/ui/textinput'
@@ -12,6 +13,7 @@ const SUPPORTED_BANKS = [{
     name: "Axis Bank",
     redirectUrl: "https://www.axisbank.com/"
 }];
+
 
 const AddMoneyCard=()=>{
 
@@ -36,7 +38,7 @@ const AddMoneyCard=()=>{
 
            </div>
            <div className="p-4 flex justify-center">
-            <Button onClick={()=>Router.push(redirectUrl)}>Add Money</Button>
+            <Button onClick={()=>{ onRampTransaction(redirectUrl,Number(amount)*100) }}>Add Money</Button>
            </div>
         </div>
         </Card>
