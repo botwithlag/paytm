@@ -5,7 +5,7 @@ export interface Transaction{
     provider:string,
     status:string
 }[]
-const OnRampTransactionsCard=({transactions}:{transactions:Transaction[]})=>{
+const OnRampTransactionsCard=({transactions,title}:{transactions:Transaction[],title:string})=>{
 transactions=transactions.reverse()
 if(transactions.length)
 
@@ -23,9 +23,16 @@ if(transactions.length)
             <div className="text-sm font-bold w-full">
               Rs{transaction.amount/100}
            </div>
-            <div className="text-sm font-bold w-full">
+    
+    {
+      transaction.status==="Success"?(
+         <div className="text-sm font-bold w-full text-green-500">
               {transaction.status}
-           </div>
+           </div>):
+        (<div className="text-sm font-bold w-full ">
+              {transaction.status}
+           </div>)
+    }
         </div>)
     }
 )}
@@ -33,7 +40,7 @@ if(transactions.length)
     </div>
 }
 
-  return  <Card title="Recent Transactions">
+  return  <Card title={title}>
        NO RECENT TRANSACTIONS
     </Card>
 

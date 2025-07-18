@@ -30,8 +30,50 @@ app.post("/hdfcWebhook", async (req, res) => {
     {
         res.send("ERROR token cannot be verified")
     }
+    
+    
+    if(tokenVerified?.completion)
+    {
+        res.send("Already completed transaction ")
+    }
 
     try {
+       const verifyBalance=await db.balance.findFirst({
+        where:{
+            userId:Number(paymentInformation.userId)
+        }
+       })
+
+       if(!verifyBalance)
+       {
+        await db.$transaction([
+            db.balance.create({
+            data:{
+                userId:Number(paymentInformation.userId),
+                locked:0,
+                amount:Number(paymentInformation.amount)
+
+            }
+        }), db.onRampTransaction.updateMany({
+                where: {
+                    token: paymentInformation.token
+                }, 
+                data: {
+                    status: "Success",
+                }
+            }),db.banktoken.update({
+                where:{
+                    token:paymentInformation.token
+                },
+               data:{
+                   completion:true
+               }
+            })
+        ])
+
+        return res.send("New Balanced Initalized for the user ")
+       }
+
         await db.$transaction([
             db.balance.updateMany({
                 where: {
@@ -81,15 +123,17 @@ app.get('/bankserver',async (req,res)=>{
     console.log("Error:Unauthenticated User")
     res.send("BAD REQUEST COULDNT FIND USER")
   }
+
   const token=(Math.random()*1000).toString()
+
  try{
      await db.banktoken.create({
     data:{
         userid:userId,
         token:token,
     }
-  
   })
+   console.log("token created")
     res.send(
         {token:token,
             message:"Token Successfully Generated"

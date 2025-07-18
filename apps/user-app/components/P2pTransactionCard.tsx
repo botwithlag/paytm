@@ -1,8 +1,8 @@
 "use client"
 import { useState } from "react"
 import Input from "@repo/ui/textinput"
+import p2ptransaction from "../app/lib/actions/p2ptransaction"
 import Card from "@repo/ui/card"
-import Center from "@repo/ui/center"
 import { Button } from "@repo/ui/button"
 const P2PtransactionCard=()=>{
 
@@ -19,7 +19,7 @@ const P2PtransactionCard=()=>{
             <Input placeholder="Amount" setData={(value)=>setAmount(value)} label="Amount"/> 
         </div>
         <div className="flex justify-center mb-2">
-            <Button onClick={()=>{}}>Send</Button>
+            <Button onClick={async()=>{await p2ptransaction(phoneNo,Number(amount)*100)}}>Send</Button> 
         </div>
         
     </div>

@@ -15,6 +15,8 @@ model User {
   password          String
   OnRampTransaction OnRampTransaction[]
   Balance           Balance[]
+  senderTransactions    P2PTransactions[] @relation("Sender Transactions")
+  recieverTransactions P2PTransactions[] @relation("Reciever Transactions")
 }
 
 model Merchant {
@@ -49,6 +51,18 @@ model Banktoken{
   userid Int //add provider and amount
   amount Int ?
   completion Boolean? @default(false)
+}
+model P2PTransactions{
+  id Int @id @default(autoincrement())
+  sender Int
+  senderName String
+  recieverName String
+  reciever Int
+  amount Int
+  time DateTime
+  senderUser User @relation("Sender Transactions",fields: [sender],references: [id])
+  recieverUser User @relation("Reciever Transactions",fields: [reciever],references: [id])
+  
 }
 
 enum AuthType {

@@ -15,7 +15,7 @@ return(
             </div>
             <div className=" flex justify-between p-2" >
                <h1>Total Balance</h1>
-               <h1>Rs +{total/100}</h1>
+               <h1>Rs {total/100}</h1>
             </div>
          </div>
 

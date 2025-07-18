@@ -3,11 +3,11 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "../auth"
 import prisma from '@repo/db/client'
 import { NextResponse } from "next/server";
-import { AxiosResponse } from "axios";
 import axios from "axios";
  
 
  const onRampTransaction=async(provider:string,amount:number)=>{
+    //TODO make onramp ws
     const session=await getServerSession(authOptions);
     if(!session.user?.id)
     {
@@ -17,11 +17,12 @@ import axios from "axios";
     }, { status: 401 });
     }
   try{
-    const request=await axios.get('http://localhost:3003/bankserver',{
+    const request=await axios.get('http://localhost:3003/bankserver',{ //Get Bank token from the server
         params:{
             userId:Number(session.user.id)
         }
     })
+    
     if(!request.data||!request.data.token)
     {
         console.log("BAD RESPONSE UNABLE TO FETCH TOKEN")
@@ -31,6 +32,8 @@ import axios from "axios";
             }
         )
     }
+
+    console.log("token revieced by the OnRampTransaction")
     const token:string=request.data.token
     await prisma.onRampTransaction.create({
         data:{
@@ -41,6 +44,12 @@ import axios from "axios";
             startTime:new Date(),
             userId:Number(session?.user?.id),
         }
+    })
+   
+  await  axios.post("http://localhost:3003/hdfcWebhook",{
+        token:token,
+        amount:amount.toString(),
+        userId:session.user.id
     })
     
     return NextResponse.json({

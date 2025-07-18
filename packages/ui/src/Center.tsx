@@ -3,10 +3,12 @@ const Center=({children}:{
 })=>{
 
 
-return  ( <div className="h-full w-full flex justify-center ">
-     {
+return  ( <div className="h-full w-full flex justify-center flex-col ">
+    <div className="flex justify center">
+      {
         children
      }
+    </div>
     </div>)
 
 }

@@ -6,8 +6,7 @@ const Sidebar=({children}:{children:React.ReactNode})=>
 
 return (
  <div className='flex  '>
-     <div className='w-72 min-h-screen border-r border-slate-500 mr-4 pt-28 text-center'>
-       <SidebarItems href={"/dashboard"}icon={<HomeIcon/>} title={"Home"}/>
+     <div className='w-72 hidden md:block min-h-screen border-r border-slate-500 mr-4 pt-28 text-center'>
        <SidebarItems href={"/transfer"}icon={<TransferIcon/>} title={"transfer"}/>
        <SidebarItems href={"/transactions"}icon={<TransactionIcon/>} title={"transactions"}/>
        <SidebarItems href={"/p2ptransaction"}icon={<P2Ptransactions/>} title={"p2ptransfer"}/>
