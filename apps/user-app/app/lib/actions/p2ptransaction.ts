@@ -57,7 +57,7 @@ try{ prisma.$transaction(async(tsx)=>
 
         await tsx.balance.update({
             where: { userId: Number(from) },
-            data: { amount: { decrement: amount } },
+            data: { amount: { decrement: db_amount } },
           });
 
       await tsx.balance.updateMany({
