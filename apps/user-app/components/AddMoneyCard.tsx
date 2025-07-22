@@ -18,8 +18,8 @@ const SUPPORTED_BANKS = [{
 const AddMoneyCard=()=>{
 
     const Router=useRouter();
-    const [redirectUrl,setRedirectUrl]=useState({ name: "HDFC Bank",
-    redirectUrl: "https://netbanking.hdfcbank.com"})
+    const [redirectUrl,setRedirectUrl]=useState( "https://netbanking.hdfcbank.com")
+    const [bankName,setBankName]=useState('HDFC Bank')
     const [amount,setAmount]=useState('')
     return <div>
         <Card title="Add Money">
@@ -34,12 +34,13 @@ const AddMoneyCard=()=>{
             key: x.name,
             value: x.name
         }))}
-        onSelect={ (value)=>{setRedirectUrl(SUPPORTED_BANKS.find((bank)=>{bank.name===value})??redirectUrl)
+        onSelect={ (value)=>{setRedirectUrl(SUPPORTED_BANKS.find((bank)=>{bank.name===value})?.redirectUrl??redirectUrl);
+        setBankName(SUPPORTED_BANKS.find((bank)=>{bank.name===value})?.name??bankName)
         }}></Select>
 
            </div>
            <div className="p-4 flex justify-center">
-            <Button onClick={()=>{ Router.push(redirectUrl.redirectUrl);if(Number(amount))onRampTransaction(redirectUrl.name,Number(amount)*100); }}>Add Money</Button>
+            <Button onClick={()=>{ Router.push(redirectUrl);if(Number(amount))onRampTransaction(bankName,Number(amount)*100); }}>Add Money</Button>
            </div>
         </div>
         </Card>
