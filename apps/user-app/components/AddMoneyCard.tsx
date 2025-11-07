@@ -1,6 +1,7 @@
 "use client"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import onRampTransaction from "../app/lib/actions/onRampTransactions";
 import Card from '@repo/ui/card'
 import Select from '@repo/ui/select'
 import TextInput from '@repo/ui/textinput'
@@ -13,10 +14,12 @@ const SUPPORTED_BANKS = [{
     redirectUrl: "https://www.axisbank.com/"
 }];
 
+// fix select 
 const AddMoneyCard=()=>{
 
     const Router=useRouter();
-    const [redirectUrl,setRedirectUrl]=useState('')
+    const [redirectUrl,setRedirectUrl]=useState( "https://netbanking.hdfcbank.com")
+    const [bankName,setBankName]=useState('HDFC Bank')
     const [amount,setAmount]=useState('')
     return <div>
         <Card title="Add Money">
@@ -31,12 +34,13 @@ const AddMoneyCard=()=>{
             key: x.name,
             value: x.name
         }))}
-        onSelect={ (value)=>{setRedirectUrl(SUPPORTED_BANKS.find(x => x.name === value)?.redirectUrl || "")
+        onSelect={ (value)=>{setRedirectUrl(SUPPORTED_BANKS.find((bank)=>{bank.name===value})?.redirectUrl??redirectUrl);
+        setBankName(SUPPORTED_BANKS.find((bank)=>{bank.name===value})?.name??bankName)
         }}></Select>
 
            </div>
            <div className="p-4 flex justify-center">
-            <Button onClick={()=>Router.push(redirectUrl)}>Add Money</Button>
+            <Button onClick={()=>{ Router.push(redirectUrl);if(Number(amount))onRampTransaction(bankName,Number(amount)*100); }}>Add Money</Button>
            </div>
         </div>
         </Card>

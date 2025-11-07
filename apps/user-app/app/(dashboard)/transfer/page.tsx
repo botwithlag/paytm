@@ -4,43 +4,18 @@ import AddMoneyCard from "../../../components/AddMoneyCard"
 import BalanceCard from "../../../components/BalanceCard"
 import OnRampTransactionsCard from "../../../components/OnRampTransaction"
 import type { Transaction } from "../../../components/OnRampTransaction"
+import { getTransactions } from "../../lib/actions/getTransactions"
 import prisma from "@repo/db/client"
 import { authOptions } from "../../lib/auth"
+import getBalance from "../../lib/actions/getBalance"
 
-async function getBalance()
-{
-    const session=await getServerSession(authOptions)
-    const balance= await prisma.balance.findFirst(
-        {
-        where:{
-            userId:Number(session?.user?.id)
-        }
-    })
-    return {amount:balance?.amount,
-            locked:balance?.locked }
-}
-async function getTransactions()
-{
-    const session=await getServerSession(authOptions);
-    const transactions=await prisma.onRampTransaction.findMany({
-        where:{
-           userId:Number(session?.user?.id)
-        }
-    })
-     return transactions.map(t=>({
-          
-            status:t.status,
-            amount:t.amount,
-            time:t.startTime,
-            provider:t.provider
-          
-    }))
 
-}
-
+//TODO create a debounce feature
+// While redirecting show loading
 export default async function transfer(){
     const balance=await getBalance()
-    const transactions= await getTransactions()
+    let transactions= await getTransactions()
+    const transactionsSlice=transactions.slice(transactions.length-5,transactions.length)
  return <div className="min-w-screen ">
         <h1 className="text-3xl m-4 text-[#6a51a6] font-bold block">Transfer</h1>   
         
@@ -53,7 +28,7 @@ export default async function transfer(){
              <BalanceCard balance={balance.amount??0} locked={balance.locked??0}></BalanceCard>
             </div>
             <div>
-             <OnRampTransactionsCard transactions={transactions}/>
+             <OnRampTransactionsCard transactions={transactionsSlice} title="Wallet Transactions"/>
             </div>
         </div>
         

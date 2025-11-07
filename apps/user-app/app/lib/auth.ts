@@ -8,7 +8,8 @@ export const authOptions = {
           name: 'Credentials',
           credentials: {
             phone: { label: "Phone number", type: "text", placeholder: "1231231231", required: true },
-            password: { label: "Password", type: "password", required: true }
+            password: { label: "Password", type: "password", required: true },
+            name:{label:"Name",type:"text",required:true}
           },
           // TODO: User credentials type from next-aut
           async authorize(credentials: any) {
@@ -36,9 +37,11 @@ export const authOptions = {
                 const user = await db.user.create({
                     data: {
                         number: credentials.phone,
-                        password: hashedPassword
+                        password: hashedPassword,
+                        name:credentials.name
                     }
                 });
+
             
                 return {
                     id: user.id.toString(),
